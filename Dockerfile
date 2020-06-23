@@ -1,4 +1,4 @@
-FROM node:carbon
+FROM centos
 COPY . .
 EXPOSE 80
 RUN rm -rf docs/html/index.html
