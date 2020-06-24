@@ -19,7 +19,6 @@ pipeline {
                 script {
                     app = docker.build(DOCKER_IMAGE_NAME)
                     app.inside {
-                        sh 'echo Hello, World!'
                     }
                 }
             }
@@ -32,7 +31,7 @@ pipeline {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
                         app.push("${env.BUILD_NUMBER}")
-                        app.push("latest") 
+                        app.push("latest")
                 )
             }
         }
@@ -41,12 +40,14 @@ pipeline {
                 branch 'master'
             }
             environment { 
+                CANARY_REPLICAS = 0
             }
             steps {
+                input 'Deploy to Production?'
                 milestone(1)
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube.yml',
+                    configs: 'kube.yml',
                     enableConfigSubstitution: true
                 )
             }
