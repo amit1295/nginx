@@ -2,13 +2,14 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE_NAME = "amibas/mission"
+        CANARY_REPLICAS = 0
     }
     stages {
         stage('Build') {
             steps {
                 echo 'Running build automation'
                 sh './gradlew build --no-daemon'
-                archiveArtifacts artifacts: 'dist/trainSchedule.zip'
+                archiveArtifacts artifacts: 'dist/nginx.zip'
             }
         }
         stage('Build Docker Image') {
@@ -32,25 +33,21 @@ pipeline {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
-                )
+                    }
+                }
             }
         }
         stage('DeployToProduction') {
             when {
                 branch 'master'
             }
-            environment { 
-                CANARY_REPLICAS = 0
-            }
             steps {
-                input 'Deploy to Production?'
                 milestone(1)
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
                     configs: 'kube.yml',
                     enableConfigSubstitution: true
-                )
-            }
+            )
         }
     }
 }
