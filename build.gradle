@@ -17,7 +17,6 @@ task zip(type: Zip) {
 
 //declare task dependencies
 build.dependsOn zip
-npm_build.dependsOn npm_test
-npm_test.dependsOn npmInstall
+
 	
 
