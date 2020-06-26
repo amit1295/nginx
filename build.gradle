@@ -17,6 +17,9 @@ task zip(type: Zip) {
 
 //declare task dependencies
 build.dependsOn zip
-
+zip.dependsOn nginx_build
+npm_build.dependsOn nginx_test
+npm_test.dependsOn nginxInstall
+npm_build.dependsOn nginxInstall
 	
 
