@@ -1,14 +1,16 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE_NAME = "amibas/mission"
+        //be sure to replace "willbla" with your own Docker Hub username
+        DOCKER_IMAGE_NAME = "amibas/train-schedule"
+        CANARY_REPLICAS = 0
     }
     stages {
         stage('Build') {
             steps {
                 echo 'Running build automation'
                 sh './gradlew build --no-daemon'
-                archiveArtifacts artifacts: 'dist/nginx.zip'
+                archiveArtifacts artifacts: 'dist/trainSchedule.zip'
             }
         }
         stage('Build Docker Image') {
@@ -36,7 +38,23 @@ pipeline {
                 }
             }
         }
-      
+        stage('SmokeTest') {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    sleep (time: 5)
+                    def response = httpRequest (
+                        url: "http://$KUBE_MASTER_IP:8081/",
+                        timeout: 30
+                    )
+                    if (response.status != 200) {
+                        error("Smoke test against canary deployment failed.")
+                    }
+                }
+            }
+        }
         stage('DeployToProduction') {
             when {
                 branch 'master'
@@ -51,4 +69,3 @@ pipeline {
             }
         }
     }
-  
