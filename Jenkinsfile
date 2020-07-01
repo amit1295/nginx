@@ -38,6 +38,21 @@ pipeline {
                 }
             }
         }
+        stage('CanaryDeploy') {
+            when {
+                branch 'master'
+            }
+            environment { 
+                CANARY_REPLICAS = 1
+            }
+            steps {
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'kube.yml',
+                    enableConfigSubstitution: true
+                )
+            }
+        }
         stage('SmokeTest') {
             when {
                 branch 'master'
@@ -69,4 +84,13 @@ pipeline {
             }
         }
     }
-   
+    post {
+        cleanup {
+            kubernetesDeploy (
+                kubeconfigId: 'kubeconfig',
+                configs: 'kube.yml',
+                enableConfigSubstitution: true
+            )
+        }
+    }
+}
