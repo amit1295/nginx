@@ -12,7 +12,8 @@ task zip(type: Zip) {
 		include "views/**"
 	}
 	destinationDir = (file("dist"))
-	archiveName = "nginx.zip"
+	   archiveName 'nginx.zip'
+
 }
 
 
