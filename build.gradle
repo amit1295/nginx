@@ -11,9 +11,8 @@ task zip(type: Zip) {
 		include "routes/**"
 		include "views/**"
 	}
-	destinationDir = (file("dist"))
-	   archiveName 'nginx.zip'
-
+	destinationDir(file("dist"))
+	baseName "trainSchedule"
 }
 
 
