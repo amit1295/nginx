@@ -15,4 +15,4 @@ task zip(type: Zip) {
 	baseName "trainSchedule"
 }
 
-
+build.dependsOn zip
