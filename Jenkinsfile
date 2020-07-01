@@ -72,13 +72,4 @@ pipeline {
             }
         }
     }
-    post {
-        cleanup {
-            kubernetesDeploy (
-                kubeconfigId: 'kubeconfig',
-                configs: 'kube.yml',
-                enableConfigSubstitution: true
-            )
-        }
-    }
-}
+   
