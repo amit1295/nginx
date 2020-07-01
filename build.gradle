@@ -15,11 +15,6 @@ task zip(type: Zip) {
 	baseName "nginx"
 }
 
-//declare task dependencies
-build.dependsOn zip
-zip.dependsOn nginx_build
-nginx_build.dependsOn nginx_test
-nginx_test.dependsOn nginxInstall
-nginx_build.dependsOn nginxInstall
+
 	
 
